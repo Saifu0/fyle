@@ -27,8 +27,6 @@ class BranchListView(ListAPIView):
         queryset_list = Branches.objects.all()
         query = self.request.GET.get("q")
 
-        print(query)
-
         if query:
             queryset_list = queryset_list.filter(
                 Q(ifsc__icontains=query) |
@@ -39,14 +37,21 @@ class BranchListView(ListAPIView):
                 Q(district__icontains=query) |
                 Q(state__icontains=query)
             ).distinct()
-        print(queryset_list)
         return queryset_list
 
 
-class BankListView(ListAPIView):
-    serializer_class = BankSerializer
+class BranchAutocompleteView(ListAPIView):
+    serializer_class = BranchSerializer
     pagination_class = LimitOffsetPagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['branch']
+    ordering = ['ifsc']
 
-    def get_queryset(self):
-        if self.request.method == "GET":
-            return Banks.objects.all()
+    def get_queryset(self, *args, **kwargs):
+        queryset_list = Branches.objects.all()
+        query = self.request.GET.get("q")
+
+        if query:
+            queryset_list = queryset_list.filter(branch__icontains=query)
+
+        return queryset_list

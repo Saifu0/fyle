@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import BankListView, BranchListView
+from .views import BranchListView, BranchAutocompleteView
 
 urlpatterns = [
-    path('banks', BankListView.as_view(), name="banks"),
+    path('branches/autocomplete', BranchAutocompleteView.as_view(), name="banks"),
     path('branches', BranchListView.as_view(), name="branches")
 ]
